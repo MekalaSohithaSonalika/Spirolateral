@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Draw the spiral path
         ctx.strokeStyle = 'blue';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.stroke();
         
         // Draw end point
