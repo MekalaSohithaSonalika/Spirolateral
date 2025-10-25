@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let showGrid = false;  // Initialize grid visibility to false
     let scale = 1.0;
     const ZOOM_FACTOR = 1.2;
+    let lineThickness = 1; // Default line thickness
 
     // Add grid toggle button event listener
     gridToggleBtn.addEventListener('click', function() {
@@ -50,6 +51,19 @@ document.addEventListener('DOMContentLoaded', function() {
         scale /= ZOOM_FACTOR;
         ctx.scale(1/ZOOM_FACTOR, 1/ZOOM_FACTOR);
         drawSpiral();
+    });
+
+    // Add line thickness controls
+    document.getElementById('reduceLineBtn').addEventListener('click', () => {
+        if (lineThickness > 0.1) {
+            lineThickness -= 0.1;
+            drawSpiral(); // Redraw the spiral with new thickness
+        }
+    });
+
+    document.getElementById('increaseLineBtn').addEventListener('click', () => {
+        lineThickness += 0.1;
+        drawSpiral(); // Redraw the spiral with new thickness
     });
 
     function drawSpiral() {
@@ -128,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Draw the spiral path
         ctx.strokeStyle = 'blue';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = lineThickness;
         ctx.stroke();
         
         // Draw end point
