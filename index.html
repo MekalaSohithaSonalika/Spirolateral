@@ -3,51 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spiral Pattern Generator</title>
+    <title>Spirolateral Pattern Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Spiral Pattern Generator</h1>
-    <div class="container">
-        <div class="controls">
-            <div class="form-group">
-                <label for="angle">Turn Angle (degrees)</label>
-                <input type="number" id="angle" value="60" step="1">
-            </div>
-            <div class="form-group">
-                <label for="initialStep">Initial Step Size</label>
-                <input type="number" id="initialStep" value="5" step="0.1">
-            </div>
-            <div class="form-group">
-                <label for="stepIncrement">Step Size Increment</label>
-                <input type="number" id="stepIncrement" value="5" step="0.1">
-            </div>
-            <div class="form-group">
-                <label for="innerSegments">Number of Inner Segments</label>
-                <input type="number" id="innerSegments" value="50" step="1">
-            </div>
-            <div class="form-group">
-                <label for="outerRepeats">Number of Outer Repeats</label>
-                <input type="number" id="outerRepeats" value="3" step="1">
-            </div>
-            <button id="generateBtn">Generate Spiral</button>
-            <button id="gridToggleBtn">Grid Needed</button>
-            <div class="zoom-controls">
-                <button id="zoomInBtn">Zoom In (+)</button>
-                <button id="zoomOutBtn">Zoom Out (-)</button>
-            </div>
-            <div class="thickness-controls">
-                <button id="reduceLineBtn">Decrease the thickness of line</button>
-                <button id="increaseLineBtn">Increase the thickness of line</button>
-            </div>
-            <div class="info">
-                Try different angles like 90° for squares or 144° for stars!
-            </div>
+
+    <header class="hero-header">
+        <div class="hero-content">
+            <h1>Spirolateral Pattern Generator</h1>
+            <p>Create beautiful geometric art from simple rules</p>
         </div>
+    </header>
+    
+    <main class="container">
+        <aside class="controls">
+            <div class="control-group">
+                <h3>Pattern Parameters</h3>
+                <div class="form-group">
+                    <label for="angle">Turn Angle (degrees)</label>
+                    <input type="number" id="angle" value="60" step="1">
+                </div>
+                <div class="form-group">
+                    <label for="initialStep">Initial Step Size</label>
+                    <input type="number" id="initialStep" value="5" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label for="stepIncrement">Step Size Increment</label>
+                    <input type="number" id="stepIncrement" value="5" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label for="innerSegments">Number of Inner Segments</label>
+                    <input type="number" id="innerSegments" value="50" step="1">
+                </div>
+                <div class="form-group">
+                    <label for="outerRepeats">Number of Outer Repeats</label>
+                    <input type="number" id="outerRepeats" value="3" step="1">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Actions</h3>
+                <button id="generateBtn" class="btn btn-primary">Generate Pattern</button>
+            </div>
+
+            <div class="control-group">
+                <h3>View Controls</h3>
+                <button id="gridToggleBtn" class="btn btn-secondary">Grid Needed</button>
+                <div class="zoom-controls">
+                    <button id="zoomInBtn" class="btn btn-secondary">Zoom In (+)</button>
+                    <button id="zoomOutBtn" class="btn btn-secondary">Zoom Out (-)</button>
+                </div>
+                <div class="thickness-controls">
+                    <button id="decreaseThicknessBtn" class="btn btn-secondary">Decrease line</button>
+                    <button id="increaseThicknessBtn" class="btn btn-secondary">Increase line</button>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <strong>Tip:</strong> Try 90° for squares or 144° for stars!
+            </div>
+        </aside>
+        
         <div class="canvas-container">
             <canvas id="spiralCanvas"></canvas>
         </div>
-    </div>
+    </main>
+    
     <script src="script.js"></script>
 </body>
 </html>
