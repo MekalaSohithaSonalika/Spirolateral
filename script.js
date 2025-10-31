@@ -9,12 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const gridToggleBtn = document.getElementById('gridToggleBtn');
     const zoomInBtn = document.getElementById('zoomInBtn');
     const zoomOutBtn = document.getElementById('zoomOutBtn');
-    let showGrid = false;  // Initialize grid visibility to false
+    // ADDED THESE
+    const increaseThicknessBtn = document.getElementById('increaseThicknessBtn');
+    const decreaseThicknessBtn = document.getElementById('decreaseThicknessBtn');
+    
+    let showGrid = false;
     let scale = 1.0;
     const ZOOM_FACTOR = 1.2;
-    let lineThickness = 1; // Default line thickness
+    let lineWidth = 3; // ADDED: Initial line width
 
-    // Add grid toggle button event listener
+    // Grid toggle event listener
     gridToggleBtn.addEventListener('click', function() {
         showGrid = !showGrid;
         gridToggleBtn.textContent = showGrid ? 'Grid Not Needed' : 'Grid Needed';
@@ -24,13 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set canvas size
     function resizeCanvas() {
         const container = canvas.parentElement;
-        // Set canvas size to be larger than container to accommodate large patterns
         canvas.width = Math.max(container.clientWidth * 2, 2400);
         canvas.height = Math.max(container.clientHeight * 2, 2000);
         drawSpiral(); // Redraw when resizing
     }
     
-    // Add resize observer for smoother resizing
     const resizeObserver = new ResizeObserver(() => {
         resizeCanvas();
     });
@@ -40,73 +42,64 @@ document.addEventListener('DOMContentLoaded', function() {
     
     generateBtn.addEventListener('click', drawSpiral);
     
-    // Add zoom controls
+    // Zoom controls
     zoomInBtn.addEventListener('click', () => {
         scale *= ZOOM_FACTOR;
-        ctx.scale(ZOOM_FACTOR, ZOOM_FACTOR);
         drawSpiral();
     });
 
     zoomOutBtn.addEventListener('click', () => {
         scale /= ZOOM_FACTOR;
-        ctx.scale(1/ZOOM_FACTOR, 1/ZOOM_FACTOR);
         drawSpiral();
     });
 
-    // Add line thickness controls
-    document.getElementById('reduceLineBtn').addEventListener('click', () => {
-        if (lineThickness > 0.1) {
-            lineThickness -= 0.1;
-            drawSpiral(); // Redraw the spiral with new thickness
+    // ADDED: Thickness controls
+    increaseThicknessBtn.addEventListener('click', () => {
+        lineWidth += 1;
+        drawSpiral();
+    });
+
+    decreaseThicknessBtn.addEventListener('click', () => {
+        if (lineWidth > 1) { // Prevent line from being 0 or negative
+            lineWidth -= 1;
+            drawSpiral();
         }
     });
 
-    document.getElementById('increaseLineBtn').addEventListener('click', () => {
-        lineThickness += 0.1;
-        drawSpiral(); // Redraw the spiral with new thickness
-    });
-
     function drawSpiral() {
-        // Reset transformation matrix before clearing
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Apply the current scale
-        ctx.setTransform(scale, 0, 0, scale, canvas.width*(1-scale)/2, canvas.height*(1-scale)/2);
-
         // Get user inputs
         const userAngle = parseFloat(document.getElementById('angle').value);
-        const angle = 180 - userAngle;  // Convert the input angle
+        const angle = 180 - userAngle;
         const initialStep = parseFloat(document.getElementById('initialStep').value);
         const stepIncrement = parseFloat(document.getElementById('stepIncrement').value);
         const innerSegments = parseInt(document.getElementById('innerSegments').value);
         const outerRepeats = parseInt(document.getElementById('outerRepeats').value);
-        
-        // Clear canvas
+
+        // 1. Reset transformation matrix and clear canvas
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Draw grid if enabled
+        // 2. Draw grid if enabled
         if (showGrid) {
             ctx.beginPath();
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = '#383838'; // Dark theme grid color
+            ctx.lineWidth = 1;
             
-            // Draw vertical lines
             for (let x = 0; x <= canvas.width; x += initialStep) {
                 ctx.moveTo(x, 0);
                 ctx.lineTo(x, canvas.height);
             }
-            
-            // Draw horizontal lines
             for (let y = 0; y <= canvas.height; y += initialStep) {
                 ctx.moveTo(0, y);
                 ctx.lineTo(canvas.width, y);
             }
-            
             ctx.stroke();
         }
         
-        // Set drawing parameters
+        // 3. Apply the current scale and center transform
+        ctx.setTransform(scale, 0, 0, scale, canvas.width * (1 - scale) / 2, canvas.height * (1 - scale) / 2);
+
+        // 4. Set drawing parameters
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         let x = centerX;
@@ -116,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Draw start point
         ctx.beginPath();
-        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.arc(x, y, 5 / scale, 0, Math.PI * 2);
         ctx.fillStyle = 'green';
         ctx.fill();
         
@@ -124,9 +117,9 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.beginPath();
         ctx.moveTo(x, y);
         
-        // Draw the spiral
+        // 5. Draw the spiral
         for (let i = 0; i < outerRepeats; i++) {
-            stepSize = initialStep; // Reset step size for each repeat
+            stepSize = initialStep;
             
             for (let j = 0; j < innerSegments; j++) {
                 const radianAngle = currentAngle * Math.PI / 180;
@@ -141,22 +134,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Draw the spiral path
-        ctx.strokeStyle = 'blue';
-        ctx.lineWidth = lineThickness;
+        ctx.strokeStyle = '#00c6ff'; // Vibrant primary color
+        ctx.lineWidth = lineWidth / scale; // MODIFIED: Use variable line width
         ctx.stroke();
         
         // Draw end point
         ctx.beginPath();
-        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.arc(x, y, 5 / scale, 0, Math.PI * 2);
         ctx.fillStyle = 'red';
         ctx.fill();
         
-        // Add information text
-        ctx.fillStyle = 'black';
-        ctx.font = '14px Arial';
+        // 6. Reset transform to draw screen-space text
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        
+        // 7. Add information text (in screen-space)
+        ctx.fillStyle = '#e0e0e0'; // Dark theme text color
+        ctx.font = '15px "Inter", sans-serif';
         ctx.fillText(`Angle: ${userAngle}°`, 20, 30);
-        ctx.fillText(`Step: ${initialStep}`, 20, 50);
-        ctx.fillText(`Increment: ${stepIncrement}`, 20, 70);
+        ctx.fillText(`Step: ${initialStep}`, 20, 55);
+        ctx.fillText(`Increment: ${stepIncrement}`, 20, 80);
     }
     
     // Draw initial spiral
